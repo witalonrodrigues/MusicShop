@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MusicShop.Models;
+using System;
 using System.Drawing;
 using System.Reflection.Emit;
 using System.Windows.Forms;
@@ -20,6 +21,51 @@ namespace MusicShop
             ConfigurarComponentesVisuais();
             ConfigurarEventosCalculo();
         }
+
+        private void ConfigurarBotoesAcao()
+        {
+            btnSalvar.Click += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(txtCliente.Text) || cmbInstrumento.SelectedIndex < 0)
+                {
+                    MessageBox.Show("Preencha o cliente e selecione um instrumento!", "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (!decimal.TryParse(txtPreco.Text, out decimal preco) || preco <= 0)
+                {
+                    MessageBox.Show("Informe um preço válido!", "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var novaVenda = new VendaInstrumento
+                {
+                    Id = BancoDadosMemoria.Vendas.Count + 1,
+                    Cliente = txtCliente.Text.Trim(),
+                    Instrumento = cmbInstrumento.SelectedItem?.ToString() ?? "",
+                    Quantidade = (int)numQuantidade.Value,
+                    PrecoUnitario = preco,
+                    DataVenda = DateTime.Now
+                };
+
+                BancoDadosMemoria.Vendas.Add(novaVenda);
+                MessageBox.Show("Venda registrada com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LimparFormulario();
+            };
+
+            btnLimpar.Click += (s, e) => LimparFormulario();
+        }
+
+        private void LimparFormulario()
+        {
+            txtCliente.Clear();
+            cmbInstrumento.SelectedIndex = -1;
+            numQuantidade.Value = 1;
+            txtPreco.Clear();
+            lblTotalValor.Text = "R$ 0,00";
+            txtCliente.Focus();
+        }
+
 
         private void ConfigurarComponentesVisuais()
         {
