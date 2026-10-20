@@ -48,7 +48,24 @@ namespace MusicShop
 
             this.Controls.AddRange(new Control[] { lblBusca, txtFiltro, btnFiltrar, dgvVendas, lblResumo });
         }
+        private void ConfigurarEventosRelatorio()
+        {
+            if (BancoDadosMemoria.Vendas.Count == 0)
+            {
+                BancoDadosMemoria.Vendas.Add(new VendaInstrumento
+                {
+                    Id = 1,
+                    Cliente = "Cliente Demonstração",
+                    Instrumento = "Guitarra Fender Stratocaster",
+                    Quantidade = 1,
+                    PrecoUnitario = 4500m,
+                    DataVenda = DateTime.Now
+                });
+            }
 
+            btnFiltrar.Click += (s, e) => CarregarDadosGrid(txtFiltro.Text);
+            txtFiltro.TextChanged += (s, e) => CarregarDadosGrid(txtFiltro.Text);
+        }
         protected void CarregarDadosGrid(string filtro = "")
         {
             var lista = BancoDadosMemoria.Vendas.AsEnumerable();
