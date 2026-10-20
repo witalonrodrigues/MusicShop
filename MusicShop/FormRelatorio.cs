@@ -1,5 +1,7 @@
-﻿using System;
+﻿using MusicShop.Models;
+using System;
 using System.Drawing;
+using System.Linq;
 using System.Reflection.Emit;
 using System.Windows.Forms;
 
@@ -15,6 +17,7 @@ namespace MusicShop
         public FormRelatorio()
         {
             ConfigurarLayoutRelatorio();
+            CarregarDadosGrid();
         }
 
         private void ConfigurarLayoutRelatorio()
@@ -44,6 +47,25 @@ namespace MusicShop
             lblResumo.AutoSize = true;
 
             this.Controls.AddRange(new Control[] { lblBusca, txtFiltro, btnFiltrar, dgvVendas, lblResumo });
+        }
+
+        protected void CarregarDadosGrid(string filtro = "")
+        {
+            var lista = BancoDadosMemoria.Vendas.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(filtro))
+            {
+                lista = lista.Where(v =>
+                    v.Cliente.Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
+                    v.Instrumento.Contains(filtro, StringComparison.OrdinalIgnoreCase));
+            }
+
+            var resultado = lista.ToList();
+            dgvVendas.DataSource = null;
+            dgvVendas.DataSource = resultado;
+
+            decimal faturamento = resultado.Sum(v => v.Total);
+            lblResumo.Text = $"Total de Pedidos: {resultado.Count} | Faturamento Acumulado: {faturamento:C2}";
         }
     }
 }
