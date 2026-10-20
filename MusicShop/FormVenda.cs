@@ -18,6 +18,7 @@ namespace MusicShop
         public FormVenda()
         {
             ConfigurarComponentesVisuais();
+            ConfigurarEventosCalculo();
         }
 
         private void ConfigurarComponentesVisuais()
@@ -72,6 +73,39 @@ namespace MusicShop
                 lblQtd, numQuantidade, lblPreco, txtPreco,
                 lblTotalTexto, lblTotalValor, btnSalvar, btnLimpar
             });
+        }
+
+        private void ConfigurarEventosCalculo()
+        {
+            cmbInstrumento.SelectedIndexChanged += (s, e) =>
+            {
+                txtPreco.Text = cmbInstrumento.SelectedIndex switch
+                {
+                    0 => "4500,00",
+                    1 => "2200,00",
+                    2 => "1900,00",
+                    3 => "6800,00",
+                    4 => "3400,00",
+                    _ => "0,00"
+                };
+                AtualizarTotal();
+            };
+
+            numQuantidade.ValueChanged += (s, e) => AtualizarTotal();
+            txtPreco.TextChanged += (s, e) => AtualizarTotal();
+        }
+
+        private void AtualizarTotal()
+        {
+            if (decimal.TryParse(txtPreco.Text, out decimal preco))
+            {
+                decimal total = preco * numQuantidade.Value;
+                lblTotalValor.Text = total.ToString("C2");
+            }
+            else
+            {
+                lblTotalValor.Text = "R$ 0,00";
+            }
         }
     }
 }
