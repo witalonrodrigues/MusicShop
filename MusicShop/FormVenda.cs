@@ -1,8 +1,9 @@
 ﻿using MusicShop.Models;
 using System;
 using System.Drawing;
-using System.Reflection.Emit;
+using System.Globalization;
 using System.Windows.Forms;
+using Label = System.Windows.Forms.Label;
 
 namespace MusicShop
 {
@@ -16,10 +17,13 @@ namespace MusicShop
         protected Button btnSalvar = new Button();
         protected Button btnLimpar = new Button();
 
+        private readonly CultureInfo _culturaBr = new CultureInfo("pt-BR");
+
         public FormVenda()
         {
             ConfigurarComponentesVisuais();
             ConfigurarEventosCalculo();
+            ConfigurarBotoesAcao();
         }
 
         private void ConfigurarBotoesAcao()
@@ -32,7 +36,8 @@ namespace MusicShop
                     return;
                 }
 
-                if (!decimal.TryParse(txtPreco.Text, out decimal preco) || preco <= 0)
+                // Parse usando pt-BR para evitar que 6800,00 vire 680000
+                if (!decimal.TryParse(txtPreco.Text, NumberStyles.Number, _culturaBr, out decimal preco) || preco <= 0)
                 {
                     MessageBox.Show("Informe um preço válido!", "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -65,7 +70,6 @@ namespace MusicShop
             lblTotalValor.Text = "R$ 0,00";
             txtCliente.Focus();
         }
-
 
         private void ConfigurarComponentesVisuais()
         {
@@ -143,14 +147,14 @@ namespace MusicShop
 
         private void AtualizarTotal()
         {
-            if (decimal.TryParse(txtPreco.Text, out decimal preco))
+            if (decimal.TryParse(txtPreco.Text, NumberStyles.Number, _culturaBr, out decimal preco))
             {
                 decimal total = preco * numQuantidade.Value;
-                lblTotalValor.Text = total.ToString("C2");
+                lblTotalValor.Text = total.ToString("C2", _culturaBr);
             }
             else
             {
-                lblTotalValor.Text = "R$ 0,00";
+                lblTotalValor.Text = 0.ToString("C2", _culturaBr);
             }
         }
     }

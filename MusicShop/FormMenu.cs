@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
-using System.Reflection.Emit;
+using Label = System.Windows.Forms.Label;
 using System.Windows.Forms;
 
 namespace MusicShop
